@@ -347,10 +347,24 @@ function runLevel(level, Display) {
     });
 }
 
+// this functtion accepts the array of levels and the dispay to be used on the game
 async function runGame(plans, Display) {
+    // it uses a for loop starting from level = 0
+    // it started with level zero because the levels is in an array and arrays index start with 0 
+    // which means the first level is at level[0]
     for (let level = 0; level < plans.length;) {
+        // this for loop will not continously run line by line
+        // this is because of the runLevel you see below
+        // the runLevel was called with an await operator
+        // this causes an async function to pause untile a promise is returned
+        // as you can see above, our runGame function uses an async operator
+        // this is because you can only use await inside an async function
         let status = await runLevel(new Level(plans[level]), Display);
+        // after a promise is returned
+        //      if the player won the player moves on to the next level
+        //      if the player lost the level wont increment which make the player play again on the same/current level
         if (status == "won") level++;
     }
+    // if the player beat all existing level you will exit the loop and the player beats the game!
     console.log("You've won!");
 }
