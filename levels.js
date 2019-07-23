@@ -1,3 +1,7 @@
+// this file contains al the levels that the player needs to finish in order to beat the game
+// right now it have 5 levels 
+// and each level is represented by a string containing these characters . # o + = | @
+// each of those character tells what should be drawn in our canvas
 var GAME_LEVELS = [`                                                    
 ................................................................................
 ................................................................................
@@ -173,6 +177,6 @@ var GAME_LEVELS = [`
 `];
 
 if (typeof module != "undefined" && module.exports && (typeof window == "undefined" || window.exports != exports))
-  module.exports = GAME_LEVELS;
+	module.exports = GAME_LEVELS;
 if (typeof global != "undefined" && !global.GAME_LEVELS)
-  global.GAME_LEVELS = GAME_LEVELS;
+	global.GAME_LEVELS = GAME_LEVELS;

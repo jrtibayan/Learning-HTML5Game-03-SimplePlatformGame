@@ -9,19 +9,30 @@ var simpleLevelPlan = `
 ......##############..
 ......................`;
 
+// this Class is the blueprint for each levels
 var Level = class Level {
+    // it accepts a string made out of characters that represents each tile within the level
     constructor(plan) {
+        // the level is then broken down into two dimensional array
         let rows = plan.trim().split("\n").map(l => [...l]);
+        // the height on the width of the level depends on the size of the array
+        // if the rows array contains 4 rows and each of those row legth is 7
+        // then the level will be 4 tiles in height and 7 tiles wide
         this.height = rows.length;
         this.width = rows[0].length;
+        // this array will be containing objects that represents each tile
         this.startActors = [];
-
+        // the lines below converts the characters of the two dimensional array into a string/word equivalent of that character
+        // and then store it to a new rows property of the level
         this.rows = rows.map((row, y) => {
             return row.map((ch, x) => {
                 let type = levelChars[ch];
+                // if the it was a string simply return the string/word equivalent of the character
                 if (typeof type == "string") return type;
-                this.startActors.push(
-                type.create(new Vec(x, y), ch));
+                // if it was not a string add it to the startActors array
+                this.startActors.push(type.create(new Vec(x, y), ch));
+                // and instead of storing that characters equivalent word, is is replaced with empty instead
+                // I think this is done because actors are moving objects and will be drawn on top after drawing the non moving part of the Level
                 return "empty";
             });
         });
@@ -110,6 +121,7 @@ var Coin = class Coin {
 
 Coin.prototype.size = new Vec(0.6, 0.6);
 
+// this is the part that tells what the characters on the levels.js file represents in the game
 var levelChars = {
     ".": "empty", "#": "wall", "+": "lava",
     "@": Player, "o": Coin,
