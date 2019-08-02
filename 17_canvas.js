@@ -11,16 +11,27 @@ function flipHorizontally(context, around) {
     context.translate(-around, 0);
 }
 
+// This class is the blueprint for the object that will be in charge of displaying everything on the canvas
 var CanvasDisplay = class CanvasDisplay {
+    // its constructor accepts 2 arguement
+    //      parent is the DOM element in which the canvas will be appended
+    //      and the level which will be drawn to the canvas
     constructor(parent, level) {
+        // add a canvas property and set its width and height
         this.canvas = document.createElement("canvas");
         this.canvas.width = Math.min(600, level.width * scale);
         this.canvas.height = Math.min(450, level.height * scale);
+        // append that canvas to the DOM element
+        // this will make the canvas appear on your webpage
         parent.appendChild(this.canvas);
+        // create another property that will be the context of the canvas
+        // this will be used later to draw on the canvas
         this.cx = this.canvas.getContext("2d");
-
+        // it is also on the canvas that some of the data needed to be displayed are stored
+        // this property which side the player should be facing if while hes not moving
         this.flipPlayer = false;
-
+        // this will be used by its updateViewport, drawActors, and drawBackground methods to
+        //      (right now I haven't much looked into the three methods mentioned above i will be updating this later on when I am done with those functions)
         this.viewport = {
             left: 0,
             top: 0,
