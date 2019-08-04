@@ -39,6 +39,11 @@ var Level = class Level {
     }
 }
 
+// the state class below create an instance of the state of your game
+// everytime you go to another level a different instance is created therefore leaving the old state/info of your game intact
+//      but that doesnt mean you can still access it using the state variable within the runLevel function
+//      you wont because everytime an new instance is created, that object or instance is then the on to be used by the state variable
+//      but I think I may however be able to check all instances if I create an array that would contain it everytime a promise is completed
 var State = class State {
     constructor(level, actors, status) {
         this.level = level;
@@ -46,10 +51,12 @@ var State = class State {
         this.status = status;
     }
 
+    // calling the start method of state creates a new instance of the State which will contain the level, actors and the status of the level/game being played
     static start(level) {
         return new State(level, level.startActors, "playing");
     }
 
+    // this returns the state of the player which info includes the players position and speed
     get player() {
         return this.actors.find(a => a.type == "player");
     }
@@ -324,6 +331,8 @@ function trackKeys(keys) {
 
 var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 
+// the actual game loop is contained here
+// I will add more detail once I have closely analized each part
 function runAnimation(frameFunc) {
     let lastTime = null;
     function frame(time) {
@@ -338,10 +347,20 @@ function runAnimation(frameFunc) {
 }
 
 function runLevel(level, Display) {
+    // here we are given a level and what display class to use
+    // using that class we create an instance that would be used to draw to our canvas
     let display = new Display(document.body, level);
+    // we also declared a state variable that will contain the level, actor within the level and the status of the game which may either be playing, won, lost
     let state = State.start(level);
+    // I am not entirely sure 
+    //      but to my understanding the value 1 on ending is the number of seconds for the delay to restarting the new game after losing or winning
     let ending = 1;
     return new Promise(resolve => {
+        // I havent fully analyzed the runAnimation function yet
+        //      from what I see it is out game loop
+        //      it will continually check player input or keys pressed by the player and make the necessary updates
+        //      then continually draw to the canvas
+        //      it will also always check the state of the game to know if the player needs to advance a level or restart that level
         runAnimation(time => {
             state = state.update(time, arrowKeys);
             display.syncState(state);
