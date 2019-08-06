@@ -332,17 +332,24 @@ function trackKeys(keys) {
 var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 
 // the actual game loop is contained here
-// I will add more detail once I have closely analized each part
 function runAnimation(frameFunc) {
     let lastTime = null;
+    // this is the actual game loop
     function frame(time) {
+        // on first run time is unidentified but as it run again it will contain the how many miliseconds it was since the loop started
         if (lastTime != null) {
+            // timeStep is the seconds equivalent of either 
+            //      the difference of present and the previous time or
+            //      100 miliseconds if the difference is more than 100 miliseconds
             let timeStep = Math.min(time - lastTime, 100) / 1000;
+            // if frameFunc return true the game loop with continue looping
+            // if it returns false the game loop will end and return promise of the state.result and stored in the status variable within runGame function
             if (frameFunc(timeStep) === false) return;
         }
         lastTime = time;
         requestAnimationFrame(frame);
     }
+    // the game loop is started with the line below
     requestAnimationFrame(frame);
 }
 
@@ -361,17 +368,31 @@ function runLevel(level, Display) {
         //      it will continually check player input or keys pressed by the player and make the necessary updates
         //      then continually draw to the canvas
         //      it will also always check the state of the game to know if the player needs to advance a level or restart that level
-        runAnimation(time => {
+        runAnimation(time => { // time here is the timeStep in frame function within the runAnimation function
+            // ##############################################################################################
+            // ###################### I will tell more about the state.Update later on ####################################
+            // ##############################################################################################
             state = state.update(time, arrowKeys);
+            // ##############################################################################################
+            // ###################### I will tell more about the display.syncState later on ####################################
+            // ##############################################################################################
             display.syncState(state);
+            // After updating check if the state status is still playing therefore it wont do anything
             if (state.status == "playing") {
+                // returning true will make gameloop continue
                 return true;
+            // if the state is not playing anymore and the ending is > 0
             } else if (ending > 0) {
                 ending -= time;
+                // returning true will make gameloop continue
                 return true;
+            // then the new game will start after ending becomes less than  zero 
             } else {
+                // this will remove the display in the DOM
                 display.clear();
+                // this will return the status of the game if won or lost
                 resolve(state.status);
+                // returning false will end the game loop
                 return false;
             }
         });
