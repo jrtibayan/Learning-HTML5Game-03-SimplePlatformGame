@@ -316,19 +316,33 @@ Player.prototype.update = function(time, state, keys) {
     return new Player(pos, new Vec(xSpeed, ySpeed));
 };
 
+// this function accepts an array containing the keys you want to keep track off
+// and returns info on what keys are being pressed which is in an object with properties that has value set to true if pressed and false if not
 function trackKeys(keys) {
+    // create an empty object;
     let down = Object.create(null);
+    // event contains info of what event happend
     function track(event) {
+        // check if the keys you are keeping tack of is the one pressed or released
         if (keys.includes(event.key)) {
+            // on the empty object the key that is being pressed or release will be added as its property 
+            //      with value containing true if the event.type is keydown and false if the is not which means the user released the button
             down[event.key] = event.type == "keydown";
             event.preventDefault();
         }
     }
+    // listen to keyup and keydowns and then execute track function if event did happen
     window.addEventListener("keydown", track);
     window.addEventListener("keyup", track);
+    // returning down and storing it to arrowKeys only happened once
+    // but everytime the value of down changes, arrowKeys will always be equal to it
     return down;
 }
 
+// arrowKeys starts out as a blank object like so {}
+// and when the user start pushing a button either arrow left/right/up, the key that is pressed is added to the object 
+// and set its value to true or false depending if it is currently pressed or not
+// for example, holding down the right arrow will make arrowKey values as so {ArrowLeft: false, ArrowRight: true, ArrowUp: false}
 var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 
 // the actual game loop is contained here
