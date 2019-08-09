@@ -234,22 +234,35 @@ Level.prototype.touches = function(pos, size, type) {
     return false;
 };
 
+// update the state depending on changes that events that have occured
 State.prototype.update = function(time, keys) {
+    // create an actors variable within the state.update method which will contain the actors after they have been updated/change value of the properties
     let actors = this.actors.map(actor => actor.update(time, this, keys));
+    
+    // created a newState variable within the state.update method that will contain the same status and level but will have the updated actors instead of the old one
     let newState = new State(this.level, actors, this.status);
 
+    // check if player has already won or lost and then return the newState to update the state to contain values of the newState
     if (newState.status != "playing") return newState;
 
     let player = newState.player;
+    // if this levels lava touches the player, player loses
     if (this.level.touches(player.pos, player.size, "lava")) {
         return new State(this.level, actors, "lost");
     }
 
+    // check if any actors has collided with the player
     for (let actor of actors) {
         if (actor != player && overlap(actor, player)) {
+            // if they have that actor will return a more updated value of the newState
+            // changes may be either of the following
+            // if it collided with lava obviously the status will become lost
+            // if it collided with a coin that coin will be removed from the actors
             newState = actor.collide(newState);
         }
     }
+    
+    // newState will be returned and the state variable will now contain the updated state of the game
     return newState;
 };
 
