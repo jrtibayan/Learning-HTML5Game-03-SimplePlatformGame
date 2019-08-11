@@ -218,6 +218,10 @@ DOMDisplay.prototype.scrollPlayerIntoView = function(state) {
     }
 };
 
+// checks if from certain position and size touches a certain type of actor
+// this was often used to either check if       player is touching the wall
+//                                              player is touching the lava
+//                                              the moving lava is touching the wall
 Level.prototype.touches = function(pos, size, type) {
     var xStart = Math.floor(pos.x);
     var xEnd = Math.ceil(pos.x + size.x);
@@ -226,11 +230,16 @@ Level.prototype.touches = function(pos, size, type) {
 
     for (var y = yStart; y < yEnd; y++) {
         for (var x = xStart; x < xEnd; x++) {
+            // check first if the starting and ending x and y coordiates are outside the canvas
             let isOutside = x < 0 || x >= this.width || y < 0 || y >= this.height;
+            // if it is outside the it will be considered a wall
+            // and if not, use the what ever type is in this.rows[y][x]
             let here = isOutside ? "wall" : this.rows[y][x];
+            // return true if any of the values in the two dimentional array using the range of x and y given above is the same as the one you are looking for
             if (here == type) return true;
         }
     }
+    // return false if the loop did not find that same type
     return false;
 };
 
@@ -273,14 +282,20 @@ function overlap(actor1, actor2) {
             actor1.pos.y < actor2.pos.y + actor2.size.y;
 }
 
+// given the newState, return a new state with same level and actors but with status of lost
 Lava.prototype.collide = function(state) {
     return new State(state.level, state.actors, "lost");
 };
 
+// given the newState
 Coin.prototype.collide = function(state) {
+    // remove the coin that collided with the player from state.actors
     let filtered = state.actors.filter(a => a != this);
+    // get the current status of the game
     let status = state.status;
+    // set status to won if there is no coin found on the filtered actors array
     if (!filtered.some(a => a.type == "coin")) status = "won";
+    // return new state with same level, updated list of actors, and updated actors
     return new State(state.level, filtered, status);
 };
 
