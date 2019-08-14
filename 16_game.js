@@ -411,9 +411,7 @@ function runLevel(level, Display) {
         //      then continually draw to the canvas
         //      it will also always check the state of the game to know if the player needs to advance a level or restart that level
         runAnimation(time => { // time here is the timeStep in frame function within the runAnimation function
-            // ##############################################################################################
-            // ###################### I will tell more about the state.Update later on ####################################
-            // ##############################################################################################
+            // state will be replaced with newState after the state.update method is finished checking for whatever needs updating
             state = state.update(time, arrowKeys);
             // ##############################################################################################
             // ###################### I will tell more about the display.syncState later on ####################################
