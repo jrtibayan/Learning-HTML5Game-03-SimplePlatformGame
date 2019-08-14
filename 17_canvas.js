@@ -53,15 +53,32 @@ CanvasDisplay.prototype.syncState = function(state) {
 };
 
 CanvasDisplay.prototype.updateViewport = function(state) {
+    // view is the the viewport
+    // the map may be too big,
+    // only an area of the map where the player is will be seen and 
+    // that area displayed will only be as big as the viewport
     let view = this.viewport, margin = view.width / 3;
+    // declare a player variable to easily access info regarding the player
     let player = state.player;
+    // this is the players position
     let center = player.pos.plus(player.size.times(0.5));
-
+    
+    // after getting the position, that will be used as the center of the viewport
+    // which means where ever the character walks, the player will be at the center of the screen unless
+    //      the player is already at the further edge of the map
+    // what happens is, if the player is walking and will be crossing through the margin,
+    //      the view.left will then change making the background displayed or the level scroll to that direction
     if (center.x < view.left + margin) {
+        // the view.left value will change but the least value it can have because of this line is 0
+        // this helps prevent scrolling the map further to the left if the player is already at the left most part of it
         view.left = Math.max(center.x - margin, 0);
     } else if (center.x > view.left + view.width - margin) {
+        // the view.left value will change but the max value it can have because of this line is the level width less than the viewport width
+        // this helps prevent scrolling the map further to the right if the player is already at the right most part of it
         view.left = Math.min(center.x + margin - view.width, state.level.width - view.width);
     }
+    // just the same functionality above but instead of being incharge of changing the view.left,
+    //      this is in charged of changing the view.top to follow the player when going up and down the map
     if (center.y < view.top + margin) {
         view.top = Math.max(center.y - margin, 0);
     } else if (center.y > view.top + view.height - margin) {
