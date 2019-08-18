@@ -146,25 +146,37 @@ playerSprites.src = "img/player.png";
 var playerXOverlap = 4;
 
 CanvasDisplay.prototype.drawPlayer = function(player, x, y, width, height){
+    // it seems the dev added few more pixels to the player width which is represented by playerXOverlap
+    // it added 2 times of the playerXOverlap because it had to be added to both left and right of the player
     width += playerXOverlap * 2;
+    // since the players width had an additional 2 x playerXOverlap, we subtract playerXOverlap to x so that the image will still be in its proper place
     x -= playerXOverlap;
+    // if the player is not zero then the player is moving
     if (player.speed.x != 0) {
+        // if the player is moving, then asign value to flipPlayer. true if the speed is less than 0, which means player was running to left. false if otherwise
         this.flipPlayer = player.speed.x < 0;
     }
 
+    // originally the player is standing which is on tile 8
     let tile = 8;
+    // if the player y is moving use the tile 9 which is for falling or jumping
     if (player.speed.y != 0) {
         tile = 9;
+    // if player x speed is not zero then continue to cycle through tile 0-7 which produces the running animation
     } else if (player.speed.x != 0) {
         tile = Math.floor(Date.now() / 60) % 8;
     }
-
+    // save the default state of the canvas
     this.cx.save();
+    // if flipPlayer is true, draw mirror of the original image
     if (this.flipPlayer) {
         flipHorizontally(this.cx, x + width / 2);
     }
+    // get the x where the player will be drawn on canvas
     let tileX = tile * width;
+    // draw the player
     this.cx.drawImage(playerSprites, tileX, 0, width, height, x, y, width, height);
+    // restore the save state of the canvas
     this.cx.restore();
 };
 
