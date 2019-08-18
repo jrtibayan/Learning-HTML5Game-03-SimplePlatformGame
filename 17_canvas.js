@@ -168,16 +168,26 @@ CanvasDisplay.prototype.drawPlayer = function(player, x, y, width, height){
     this.cx.restore();
 };
 
+// drawActors is reponsible for drawing the moving parts in the game
+// these are the player, lava and coins
 CanvasDisplay.prototype.drawActors = function(actors) {
+    // for every actor in the actors array, do what is inside the for loop
     for (let actor of actors) {
+        // set the width and height to be used to draw on canvas by getting the size of the actor * scale
         let width = actor.size.x * scale;
         let height = actor.size.y * scale;
+        // set the x and y where the actor will be drawn to
         let x = (actor.pos.x - this.viewport.left) * scale;
         let y = (actor.pos.y - this.viewport.top) * scale;
+        // if the actor is a player, use the drawPlayer method to draw the actor
         if (actor.type == "player") {
             this.drawPlayer(actor, x, y, width, height);
+        // if it is not a player, it is either a coin or lava, do the stuff below
         } else {
+            // if the actor type is coin use 2*scale to get its source x
+            // if the actor type is not coin then it is a moving lava use 1*scale to get its source x
             let tileX = (actor.type == "coin" ? 2 : 1) * scale;
+            // draw the coin/lava
             this.cx.drawImage(
                 otherSprites,
                 tileX, 0, width, height,
