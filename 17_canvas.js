@@ -105,24 +105,37 @@ CanvasDisplay.prototype.clearDisplay = function(status) {
 var otherSprites = document.createElement("img");
 otherSprites.src = "img/sprites.png";
 
+// this method will draw most of the items that needs to be displayed
 CanvasDisplay.prototype.drawBackground = function(level) {
+    // the this.viewport started with left and top equal to 0 but after updateViewport ran it will be dependin on where the player is in the level
     let {left, top, width, height} = this.viewport;
+    // we then get the start and end of the x and y for the two dimensional array containing the elements we want to draw
     let xStart = Math.floor(left);
     let xEnd = Math.ceil(left + width);
     let yStart = Math.floor(top);
     let yEnd = Math.ceil(top + height);
 
+    // we loop through the array doing the top row first then moving downward our two dimensional array
     for (let y = yStart; y < yEnd; y++) {
+        // we loop through what is on the current row and display what is on left most first moving to the right
         for (let x = xStart; x < xEnd; x++) {
+            // the tile represents the tile we want to draw to the canvas
             let tile = level.rows[y][x];
+            // if it is empty we move on to the next one
             if (tile == "empty") continue;
+            // if it is not empty get the x and y coordinate on where to draw that tile on the canvas
             let screenX = (x - left) * scale;
             let screenY = (y - top) * scale;
-            let tileX = tile == "lava" ? scale : 0;
-            this.cx.drawImage(
-                otherSprites,
-                tileX, 0, scale, scale,
-                screenX, screenY, scale, scale
+            // store the starting x of the lava within the otherSpite
+            // if it is not lava then it is wall and its x is 0
+            // coin is not inlcuded when drawing background. they are drawn when drawActors is executed
+            let tileX = tile == "lava" ? scale : 0; 
+            this.cx.drawImage( // drawImage is a built in function that allows us to use from the context to be able to draw on the canvas
+                otherSprites, // this is the sprite atlas
+                tileX, 0, // tileX is left most x of the image in otherSprite, 0 is the top most y of image in otherSprite. since all image are in 1 row then the top most y of all of them are 0
+                scale, scale, // these are the width and height of the image in otherSprite
+                screenX, screenY, // these coordinates is where the image will be drawn in the canvas. the image is not centered on this coordinates. that will be the location of the top left corner of the image
+                scale, scale // these are the width and height of the image on canvas
             );
         }
     }
