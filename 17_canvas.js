@@ -45,10 +45,16 @@ var CanvasDisplay = class CanvasDisplay {
     }
 }
 
+// this method of the display syncs the display with the value of the data currently on the state
 CanvasDisplay.prototype.syncState = function(state) {
+    // update which part of the map should be displayed on the canvas
+    // this mostly depends on where the character is at
     this.updateViewport(state);
+    // fill the whole canvas with the color set depending on what is the status of the game
     this.clearDisplay(state.status);
+    // draw the walls and the lava that does not move
     this.drawBackground(state.level);
+    // draw the player, coins and lavas that moves
     this.drawActors(state.actors);
 };
 
