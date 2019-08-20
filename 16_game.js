@@ -62,13 +62,22 @@ var State = class State {
     }
 }
 
+// Vec class is used for positions of things and also speed
 var Vec = class Vec {
+    // Vec have only 2 properties which are x and y
+    // These x and y could be coordinates if Vec is used as a position or 
+    // if it is used to determine speed of something x is how fast it travels horizontally and y is the speed it travels vertically
     constructor(x, y) {
-        this.x = x; this.y = y;
+        this.x = x;
+        this.y = y;
     }
+    // Plus is used to get new positions of stuff 
+    //      by incrementing the current position with the distance it may have traveled 
+    //      depending on how much time have passed and the speed of that object
     plus(other) {
         return new Vec(this.x + other.x, this.y + other.y);
     }
+    // Times is mostly used to compute for how much distance the player/whatever traveled depending on how much time have passed and the speed of that actor
     times(factor) {
         return new Vec(this.x * factor, this.y * factor);
     }
