@@ -83,19 +83,31 @@ var Vec = class Vec {
     }
 }
 
+// This class is the blueprint for the player
 var Player = class Player {
+    // upon making a new Player, it accepts 2 arguements which are then stored as its properties
     constructor(pos, speed) {
+        // the pos would contain the inital position of the player in the Level
         this.pos = pos;
+        // the speed would contain the initial speed of the player
         this.speed = speed;
     }
 
+    // actors are saved in an array so that we can loop through it
+    // we made this method so that while looping though the array of actors we can check what kind of actor we are currently using
     get type() { return "player"; }
 
+    // making a create method makes it easier to create a new player
+    // since a new player automatically is not moving then speed is not needed and we only need to input its initial position
     static create(pos) {
         return new Player(pos.plus(new Vec(0, -0.5)), new Vec(0, 0));
     }
 }
 
+// I dont really get why size is added like so
+// In my understanding this is equivalent to adding a this.size to the player class
+// ??????? so why code it like so ????????
+// I will get back to this next time when I have fully inspected the created player object
 Player.prototype.size = new Vec(0.8, 1.5);
 
 var Lava = class Lava {
@@ -331,25 +343,54 @@ var playerXSpeed = 7;
 var gravity = 30;
 var jumpSpeed = 17;
 
+// The player have an update method that will update its position depending on the user input
+// time contains how much time have elapsed since last frame
+// state contains other info about the game
+// keys contain what the are currenly pressed
 Player.prototype.update = function(time, state, keys) {
     let xSpeed = 0;
+    // if the player is pressing left, the x speed become less and less
     if (keys.ArrowLeft) xSpeed -= playerXSpeed;
+    // if the player is pressing right, the x speed becomes higher
     if (keys.ArrowRight) xSpeed += playerXSpeed;
+    
+
+    // pos will contain the previous position of the player
     let pos = this.pos;
+    // movedX will be the new x of the player
+    // it will be depending on the current position plus how far the player has to travel, 
+    //      which we can get by multiplying time elapased and how fast the player can travel horizontally
+    // if the traveled distance is negative the character will be moving to the left and
+    //      if the it is positive the character will be moving to the right
     let movedX = pos.plus(new Vec(xSpeed * time, 0));
+    // if the player is not touching the wall the new position which is movedX is then passed to pos
+    //      if the player is touching the wall no need to update the x position since you already hit the wall
     if (!state.level.touches(movedX, this.size, "wall")) {
         pos = movedX;
     }
 
+    // it is asumed that the character is always falling down because of gravity
+    // just like when walking the speed on which you are falling is increasing
+    // this is not obvious on waling because whenever we stop walking the speed resets to 0
+    // and I assume this will also reset but not by user input but by every time the player gets to step on the floor
     let ySpeed = this.speed.y + time * gravity;
+    // calculate the new y position of the player
+    // its just the same with the x
+    // you get the current position and add the calculated distance the player has to travel
     let movedY = pos.plus(new Vec(0, ySpeed * time));
+    // and then if the player is not touching the wall, that new y will be used on pos
+    // it will not be used if the player hit the wall/floor
     if (!state.level.touches(movedY, this.size, "wall")) {
         pos = movedY;
+    // when a player pressed the up, this makes the character jump
     } else if (keys.ArrowUp && ySpeed > 0) {
         ySpeed = -jumpSpeed;
+    // and just like what I assumed earlier this is where the speed is reset so that it doesnt increment too much and reset every time a wall is hit
     } else {
         ySpeed = 0;
     }
+
+    // return the new Player which will contain the updated position and  speed
     return new Player(pos, new Vec(xSpeed, ySpeed));
 };
 
