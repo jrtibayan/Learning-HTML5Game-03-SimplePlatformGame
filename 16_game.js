@@ -30,6 +30,7 @@ var Level = class Level {
                 // if the it was a string simply return the string/word equivalent of the character
                 if (typeof type == "string") return type;
                 // if it was not a string add it to the startActors array
+                console.log(type);
                 this.startActors.push(type.create(new Vec(x, y), ch));
                 // and instead of storing that characters equivalent word, is is replaced with empty instead
                 // I think this is done because actors are moving objects and will be drawn on top after drawing the non moving part of the Level
@@ -83,6 +84,8 @@ var Vec = class Vec {
     }
 }
 
+var myChar = null;
+
 // This class is the blueprint for the player
 var Player = class Player {
     // upon making a new Player, it accepts 2 arguements which are then stored as its properties
@@ -100,14 +103,21 @@ var Player = class Player {
     // making a create method makes it easier to create a new player
     // since a new player automatically is not moving then speed is not needed and we only need to input its initial position
     static create(pos) {
-        return new Player(pos.plus(new Vec(0, -0.5)), new Vec(0, 0));
+        let tempPlayer = new Player(pos.plus(new Vec(0, -0.5)), new Vec(0, 0));
+        myChar = tempPlayer;
+        return tempPlayer;
     }
 }
 
-// I dont really get why size is added like so
-// In my understanding this is equivalent to adding a this.size to the player class
-// ??????? so why code it like so ????????
-// I will get back to this next time when I have fully inspected the created player object
+// This adds size to the prototype of the class Player
+// It is coded like this so that instead of coding it in the constructor,
+//      every instance of the player created will already will aready have this property since it is inherited from its prototype
+// I think it also serve the same purpose as the methods added to prototype which is to save resources
+// It saves resources because coding it like this is like having only one method but is inherited from the prototype
+// Adding the method inside the class consume more resources because everytime an instace of that class is created,
+//      each of those instancess have their own copy of the method which makes it consume more resources than adding it to the prototype
+// NOTE: About this being the same purpose as methods added to the prototype which is to save resources, I am not too sure about that
+//      What I am sure about is that this makes sure all instances of the player have a size property since it is added to its prototype
 Player.prototype.size = new Vec(0.8, 1.5);
 
 var Lava = class Lava {
@@ -426,6 +436,7 @@ var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 // the actual game loop is contained here
 function runAnimation(frameFunc) {
     let lastTime = null;
+    let tempNum = 0;
     // this is the actual game loop
     function frame(time) {
         // on first run time is unidentified but as it run again it will contain the how many miliseconds it was since the loop started
@@ -439,7 +450,10 @@ function runAnimation(frameFunc) {
             if (frameFunc(timeStep) === false) return;
         }
         lastTime = time;
-        requestAnimationFrame(frame);
+        if(tempNum<10) {
+            tempNum++;
+            requestAnimationFrame(frame);
+        }
     }
     // the game loop is started with the line below
     requestAnimationFrame(frame);
