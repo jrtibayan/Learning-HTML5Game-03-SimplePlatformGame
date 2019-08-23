@@ -142,21 +142,32 @@ var Lava = class Lava {
 
 Lava.prototype.size = new Vec(1, 1);
 
+// the Coin class is used to create multiple coin instances
 var Coin = class Coin {
+    // the coin will have 3 basic properties this will be its current position, base position and wobble
+    // the basePos is the base position of the coin or its original position. this will not change
+    // the pos is the current position of the coin. since the coin is moving, this will be the one to change and the one used when drawing a coin
+    // each coin will have different/random wobble once they are created. this property will be used so that coins movement will not be in sync with each other
     constructor(pos, basePos, wobble) {
         this.pos = pos;
         this.basePos = basePos;
         this.wobble = wobble;
     }
 
+    // just like the player class, since the coin instances will be in an array and
+    //      we often cycle though each item on the array we can check what type of actor it is by calling this method
     get type() { return "coin"; }
 
+    // this help to create instances of Coin easier
+    // using this method, we only need to pass 1 arguement which is the position
     static create(pos) {
         let basePos = pos.plus(new Vec(0.2, 0.1));
         return new Coin(basePos, basePos, Math.random() * Math.PI * 2);
     }
 }
 
+// this is the size of the coin
+// why this is coded like this instead of putting inside the constructor, please see Player.prototype.size
 Coin.prototype.size = new Vec(0.6, 0.6);
 
 // this is the part that tells what the characters on the levels.js file represents in the game
@@ -341,9 +352,21 @@ Lava.prototype.update = function(time, state) {
     }
 };
 
+// this two variables help compute for the new position of the coin
 var wobbleSpeed = 8, wobbleDist = 0.07;
 
+// all coins are moving when playing, this method update the coins position to make the coin move
 Coin.prototype.update = function(time) {
+    // I wont be reading much into the code on how the coins new position is computed
+    // for now a rough understanding on how this works will suffice
+    // my understanding right now is that...
+    //      every coin starts with a different wobble value
+    //      from that current wobble value, it will then calculate for a new wobble value using the help of how much time has elapsed and wobbleSpeed
+    //      from that new wobble position will be calculated
+    //      the wobblePos is not really the actual y position of the coin but the distance from the base y position
+    //      so after updating the new coin position will have the current x position and the base y position + wobblePos
+    //      it will still use the same base position
+    //      and the wobble will also have the new computed wobble earlier
     let wobble = this.wobble + time * wobbleSpeed;
     let wobblePos = Math.sin(wobble) * wobbleDist;
     return new Coin(this.basePos.plus(new Vec(0, wobblePos)), this.basePos, wobble);
