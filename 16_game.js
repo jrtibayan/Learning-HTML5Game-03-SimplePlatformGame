@@ -30,7 +30,7 @@ var Level = class Level {
                 // if the it was a string simply return the string/word equivalent of the character
                 if (typeof type == "string") return type;
                 // if it was not a string add it to the startActors array
-                console.log(type);
+
                 this.startActors.push(type.create(new Vec(x, y), ch));
                 // and instead of storing that characters equivalent word, is is replaced with empty instead
                 // I think this is done because actors are moving objects and will be drawn on top after drawing the non moving part of the Level
@@ -459,7 +459,8 @@ var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 // the actual game loop is contained here
 function runAnimation(frameFunc) {
     let lastTime = null;
-    let tempNum = 0;
+    let maxLoop = 800; // set to 0 if you want to contunously loop
+    let loopCount = 0; // i added this to count how many times it has looped through the game and will be used to compare to maxLoop to end the loop
     // this is the actual game loop
     function frame(time) {
         // on first run time is unidentified but as it run again it will contain the how many miliseconds it was since the loop started
@@ -473,8 +474,12 @@ function runAnimation(frameFunc) {
             if (frameFunc(timeStep) === false) return;
         }
         lastTime = time;
-        if(tempNum<10) {
-            tempNum++;
+        // I often console log to see the current value of stuff in the game
+        // I is hard to check if it is still running so I let it loop a couple times then check the outputs
+        // By setting the maxLoop to 0 it will run the game continously but if a value greater than 0 is set, it will run until loopCount gets to that maxLoop value
+        if(loopCount<maxLoop || maxLoop===0) {
+            loopCount++;
+            console.log("my log here..."); // this helps me check values to understand how the code work
             requestAnimationFrame(frame);
         }
     }
