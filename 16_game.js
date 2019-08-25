@@ -120,15 +120,25 @@ var Player = class Player {
 //      What I am sure about is that this makes sure all instances of the player have a size property since it is added to its prototype
 Player.prototype.size = new Vec(0.8, 1.5);
 
+// the Coin class is used to create multiple lava instances
 var Lava = class Lava {
+    // the lava have 3 basic properties
+    // the pos which contains its current position
+    // the speed which would tell if the lava is moving like if its falling or going left and right the canvas and it can also have zero speed which makes it stationary
+    // and the reset which is the position where it goes after the falling lava hits the floor. this makes a new lava to fall again
     constructor(pos, speed, reset) {
         this.pos = pos;
         this.speed = speed;
         this.reset = reset;
     }
 
+    // just like the other class this helps identify what type of actor is currently used within the loop
     get type() { return "lava"; }
 
+    // this makes creating 3 different kind of lava easier
+    // you only need to pass it the position and what type of lava it is
+    // this will create a lava on that position and asign the appropriate speed to make it move dependin on what kind of lava it is
+    // it will also asign reset position to it if the type of lava is the one that falls vertically which is represented by the letter "v" on the var ch
     static create(pos, ch) {
         if (ch == "=") {
             return new Lava(pos, new Vec(2, 0));
@@ -140,6 +150,8 @@ var Lava = class Lava {
     }
 }
 
+// this is the size of the lava
+// why this is coded like this instead of putting inside the constructor, please see Player.prototype.size
 Lava.prototype.size = new Vec(1, 1);
 
 // the Coin class is used to create multiple coin instances
