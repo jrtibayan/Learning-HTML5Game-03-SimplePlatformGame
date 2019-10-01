@@ -471,7 +471,7 @@ var arrowKeys = trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
 // the actual game loop is contained here
 function runAnimation(frameFunc) {
     let lastTime = null;
-    let maxLoop = 800; // set to 0 if you want to contunously loop
+    let maxLoop = 0; // set to 0 if you want to contunously loop
     let loopCount = 0; // i added this to count how many times it has looped through the game and will be used to compare to maxLoop to end the loop
     // this is the actual game loop
     function frame(time) {
